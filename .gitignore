@@ -1,6 +1,6 @@
 # Additions
 .DS_Store
-.vscode/c_cpp_properties.*
+.vscode/*
 arduino_secrets.h
 
 
