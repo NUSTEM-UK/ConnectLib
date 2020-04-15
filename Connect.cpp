@@ -1,7 +1,7 @@
 // Save this to Libraries directory
 
 #include "Arduino.h"
-#include "Kniwwlino.h"
+#include "Kniwwelino.h"
 #include "Connect.h"
 #include "arduino_secrets.h"
 
@@ -22,7 +22,11 @@
 
 #define NTP_SERVER			  	"uk.pool.ntp.org"
 #define NTP_PORT			  	8888
-#define NTP_TIMEZONE			1
+// TODO: work out what this is and if it's used:
+// (NTP_TIMEZONE doesn't appear to be used by Kniwwelino or Timezone libraries.
+// Check against actual time received. May need to do something clever with BST,
+// But that should be baked into the Timezone library if we call it correctly.)
+#define NTP_TIMEZONE			1 
 #define NTP_PACKET_SIZE			48 // NTP time is in the first 48 bytes of message
 
 int my_mood;
@@ -37,7 +41,7 @@ Connect::Connect(int pin)
     // Setup stuff here
 }
 
-oid Connect::method()
+void Connect::method()
 {
     // Class method code
 }
@@ -45,7 +49,7 @@ oid Connect::method()
 void connectInit() {
     Kniwwelino.RGBsetBrightness((int)200);
     Kniwwelino.RGBclear();
-    Kniwwelino.MATRIXdrawIcon(ICON_SMILE)
+    Kniwwelino.MATRIXdrawIcon(ICON_SMILE);
     #if WIFI_ON
     Kniwwelino.MQTTpublish("hello_my_name_is", String(Kniwwelino.getMAC()));
     #endif

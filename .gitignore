@@ -37,3 +37,4 @@ arduino_secrets.h
 *.out
 *.app
 
+.vscode/arduino.json
