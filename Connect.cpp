@@ -12,7 +12,7 @@ String displayed_mood;
 String received_string;
 
 // Constructor
-Connect::Connect(int pin)
+ConnectLib::ConnectLib()
 {
     // Setup stuff here
     int my_mood;
@@ -28,7 +28,7 @@ Connect::Connect(int pin)
 // }
 
 // Call in setup()
-void Connect::begin() {
+void ConnectLib::begin() {
     Kniwwelino.begin("connect_object", WIFI_ON, true, false); // Wifi=true, Fastboot=true, MQTT Logging=false
     Serial.begin(115200);
     Serial.println();
@@ -50,3 +50,91 @@ void Connect::begin() {
     my_mood = 0;
 
 }
+
+void ConnectLib::handleButtons() {
+    if (Kniwwelino.BUTTONAclicked()) {
+        changeMood();
+    }
+    if (Kniwwelino.BUTTONABclicked()) {
+        Kniwwelino.MATRIXdrawIcon(ICON_ARROW_UP);
+        Kniwwelino.sleep((unsigned long)500);
+        #if WIFI_ON
+        Kniwwelino.MQTTpublish("MOOD", String(my_icon));
+        #else
+        network_mood = String(my_icon);
+        #endif
+    }
+}
+
+void ConnectLib::changeMood() {
+    my_mood += 1;
+    // loop around moods
+    if (my_mood > 4) {
+        my_mood = 0;
+    }
+    switch (my_mood) {
+    case 0:
+        my_icon = String(HAPPY);
+        break;
+    case 1:
+        my_icon = String(SAD);
+        break;
+    case 2:
+        my_icon = String(HEART);
+        break;
+    case 3:
+        my_icon = String(SKULL);
+        break;
+    case 4:
+        my_icon = String(DUCK);
+        break;
+    default:
+        break;
+    }
+
+    Kniwwelino.MATRIXdrawIcon(my_icon);
+    Kniwwelino.sleep((unsigned long) 1000);
+    Kniwwelino.MATRIXdrawIcon(network_mood);
+}
+
+String ConnectLib::getMood() {
+//TODO: Implement
+return my_mood;
+}
+
+String ConnectLib::setMood(String newMood) {
+//TODO: Implement
+return ;
+}
+
+String ConnectLib::getNetworkMood() {
+//TODO: Implement
+}
+
+String ConnectLib::setNetworkMood(String newMood) {
+//TODO: Implement
+}
+
+String ConnectLib::getDisplayedMood() {
+//TODO: Implement
+}
+
+String ConnectLib::setDisplayedMood(String newMood) {
+//TODO: Implement
+}
+
+
+// TODO: replace this with Kniwwelino calls rather than rolling my own.
+static void messageReceived(String &topic, String &payload) {
+    if (topic == "MESSAGE") {
+        received_string = payload;
+    } else if (topic == "MOOD") {
+        network_mood = payload;
+    }
+    
+}
+
+// pre-instantiate object
+// cf. KniwwelinoLib
+
+ConnectLib Connect = ConnectLib();

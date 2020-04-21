@@ -42,17 +42,31 @@
 #define SKULL "B0111010101111110111001110" 
 #define DUCK "B0110011100011110111000000"
 
-class Connect{
+#define VERSION "0.01"
+
+class ConnectLib{
 public:
-    Connect(int pin); //root object, needs variable stubs
+    ConnectLib(); //root object, needs variable stubs
     void begin();
-    // void func1();
-    // void func2();
+    void handleButtons();
+    void changeMood();
+
+    // Getters and setters
+    String getMood();                   //TODO: Implement
+    String setMood(String);             //TODO: Implement
+    String getNetworkMood();            //TODO: Implement
+    String setNetworkMood(String);      //TODO: Implement
+    String getDisplayedMood();          //TODO: Implement
+    String setDisplayedMood(String);    //TODO: Implement
+    
 private:
     int _pin;
+    static void messaageReceived(String s, String t);
 };
 
-void init(void);
+extern ConnectLib Connect;
+
+// void init(void);
 
 
 
