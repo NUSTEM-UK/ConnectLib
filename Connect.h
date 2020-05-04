@@ -13,6 +13,7 @@
 #include <ServoEasing.h>
 #include "arduino_secrets.h" // #define MQTT_PASS, .gitignored
 
+#define VERSION "0.01"
 #define WIFI_ON 1
 
 // Redefine MQTT stuff previously set in Kniwwelino.h
@@ -42,8 +43,6 @@
 #define SKULL "B0111010101111110111001110" 
 #define DUCK "B0110011100011110111000000"
 
-#define VERSION "0.01"
-
 class ConnectLib{
 public:
     ConnectLib(); //root object, needs variable stubs
@@ -58,6 +57,7 @@ public:
     String setNetworkMood(String);      //TODO: Implement
     String getDisplayedMood();          //TODO: Implement
     String setDisplayedMood(String);    //TODO: Implement
+
     
 private:
     int _pin;
