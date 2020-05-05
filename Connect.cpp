@@ -11,6 +11,12 @@ String network_mood;
 String displayed_mood;
 String received_string;
 
+struct mood {
+    int mood_index;
+    String mood_icon;
+    String mood_text;
+}
+
 // Constructor
 ConnectLib::ConnectLib()
 {
