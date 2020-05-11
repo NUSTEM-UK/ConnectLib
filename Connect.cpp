@@ -11,10 +11,11 @@ String network_mood;
 String displayed_mood;
 String received_string;
 
-struct mood {
-    int mood_index;
-    String mood_icon;
-    String mood_text;
+struct Mood {
+    int index;
+    String text;
+    String icon;
+    String function;
 }
 
 // Constructor
@@ -42,10 +43,19 @@ void ConnectLib::begin() {
 
     #if WIFI_ON
         Kniwwelino.MQTTsetGroup(String("NUSTEM"));
-        Kniwwelino.MQTTonMessage(messageReceived);
+        Kniwwelino.MQTTonMessage(messageReceived); // throw the callback
         Kniwwelino.MQTTsubscribe("MESSAGE");
         Kniwwelino.MQTTsubscribe("MOOD");
     #endif
+
+    // configure moods
+    Mood moods[5] = {
+        {0, "HAPPY", "B0000001010000001000101110", "beHappy"},
+        {1, "SAD", "B0000001010000000111010001", "beSad"}
+        {2, "HEART", "B0101011111111110111000100", "beHeart"}
+        {3, "SKULL", "B0111010101111110111001110" , "beSkull"}
+        {4, "DUCK", "B0110011100011110111000000", "beDuck"}
+    }
 
     Kniwwelino.RGBsetBrightness((int)200);
     Kniwwelino.RGBclear();
@@ -103,34 +113,64 @@ void ConnectLib::changeMood() {
     Kniwwelino.MATRIXdrawIcon(network_mood);
 }
 
+int ConnectLib::setMoodHandler(String thisMood, String thisMethod) {
+    // TODO: method prototype
+    int targetMood = getIndexForMood(thisMood);
+    if (targetMood != -1) {
+        moods[targetMood].text = thisMood;
+        moods[targetMood].function = thisMethod;
+    }
+    return targetMood;
+}
+
+String ConnectLib::getMoodHandler(String thisMood) {
+    // TODO: method prototype
+    int targetMood = getIndexForMood(thisMood);
+    if (targetMood != -1) {
+        return moods[targetMood].function;
+    }
+}
+
+int getIndexForMood(String thisMood) {
+    for (int i = 0; i < NUM_MOODS; i++) {
+        if (moods[i].text == thisMood) {
+            return i;
+        }
+    }
+    // TODO: handle adding moods to the end of the array.
+    // Ugh, need to have a MAX_MOODS variable here.
+    return ;
+}
+
 String ConnectLib::getMood() {
-//TODO: Implement
-return my_mood;
+    //TODO: Implement
+    return my_mood;
 }
 
 String ConnectLib::setMood(String newMood) {
-//TODO: Implement
-return ;
+    //TODO: Implement
+    return ;
 }
 
 String ConnectLib::getNetworkMood() {
-//TODO: Implement
+    //TODO: Implement
 }
 
 String ConnectLib::setNetworkMood(String newMood) {
-//TODO: Implement
+    //TODO: Implement
 }
 
 String ConnectLib::getDisplayedMood() {
-//TODO: Implement
+    //TODO: Implement
 }
 
 String ConnectLib::setDisplayedMood(String newMood) {
-//TODO: Implement
+    //TODO: Implement
 }
 
 
 // TODO: replace this with Kniwwelino calls rather than rolling my own.
+// ...though this is Kniwwelino callback, if we register messageReceived accordingly.
 static void messageReceived(String &topic, String &payload) {
     if (topic == "MESSAGE") {
         received_string = payload;
