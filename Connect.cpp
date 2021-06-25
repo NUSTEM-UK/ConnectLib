@@ -11,12 +11,12 @@ String network_mood;
 String displayed_mood;
 String received_string;
 
-struct Mood {
+typedef struct {
     int index;
     String text;
     String icon;
     String function;
-}
+} Mood;
 
 // Constructor
 ConnectLib::ConnectLib()
@@ -50,12 +50,12 @@ void ConnectLib::begin() {
 
     // configure moods
     Mood moods[5] = {
-        {0, "HAPPY", "B0000001010000001000101110", "beHappy"},
-        {1, "SAD", "B0000001010000000111010001", "beSad"}
-        {2, "HEART", "B0101011111111110111000100", "beHeart"}
-        {3, "SKULL", "B0111010101111110111001110" , "beSkull"}
-        {4, "DUCK", "B0110011100011110111000000", "beDuck"}
-    }
+        {0, "HAPPY", "B0000001010000001000101110", "doHappy"},
+        {1, "SAD", "B0000001010000000111010001", "doSad"},
+        {2, "HEART", "B0101011111111110111000100", "doHeart"},
+        {3, "SKULL", "B0111010101111110111001110" , "doSkull"},
+        {4, "DUCK", "B0110011100011110111000000", "doDuck"}
+    };
 
     Kniwwelino.RGBsetBrightness((int)200);
     Kniwwelino.RGBclear();
@@ -139,17 +139,15 @@ int getIndexForMood(String thisMood) {
     }
     // TODO: handle adding moods to the end of the array.
     // Ugh, need to have a MAX_MOODS variable here.
-    return ;
 }
 
 String ConnectLib::getMood() {
     //TODO: Implement
-    return my_mood;
+    return (String) my_mood;
 }
 
 String ConnectLib::setMood(String newMood) {
     //TODO: Implement
-    return ;
 }
 
 String ConnectLib::getNetworkMood() {
@@ -177,7 +175,6 @@ static void messageReceived(String &topic, String &payload) {
     } else if (topic == "MOOD") {
         network_mood = payload;
     }
-    
 }
 
 // pre-instantiate object
