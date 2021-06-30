@@ -11,10 +11,11 @@
 
 #include <Kniwwelino.h>         // Includes Arduino.h for us
 #include <ServoEasing.h>
-#include "arduino_secrets.h"    // #define MQTT_PASS, .gitignored
+#include "arduino_secrets.h"    // define MQTT_PASS, .gitignored
 
-#define VERSION "0.01"
+#define VERSION "0.02"
 #define WIFI_ON 1
+#define NUMBER_OF_MOODS 5
 
 // Redefine MQTT stuff previously set in Kniwwelino.h
 // TODO: check Kniwwelino.MQTTsetup()
@@ -40,51 +41,57 @@
 #define NTP_TIMEZONE			1
 #define NTP_PACKET_SIZE			48 // NTP time is in the first 48 bytes of message
 
-#define NUM_MOODS               5
-// #define HAPPY "B0000001010000001000101110"
-// #define SAD "B0000001010000000111010001"
-// #define HEART "B0101011111111110111000100"
-// #define SKULL "B0111010101111110111001110"
-// #define DUCK "B0110011100011110111000000"
+typedef void (*CallbackFunction)(void);
+
+typedef struct {
+    int index;
+    String text;
+    String icon;
+    CallbackFunction callback;
+} Mood;
 
 class ConnectLib{
-public:
-    ConnectLib(); //root object, needs variable stubs
-    void begin();
-    void handleButtons();
-    void changeMood();
-    void loop();                        //TODO: Implement
+    public:
+        ConnectLib(); // Root object, needs variable stubs
 
-    // Getters and setters
-    String getMood();                   //TODO: Implement
-    String setMood(String);             //TODO: Implement
-    String getNetworkMood();            //TODO: Implement
-    String setNetworkMood(String);      //TODO: Implement
-    String getDisplayedMood();          //TODO: Implement
-    String setDisplayedMood(String);    //TODO: Implement
+        void begin();
+        void loop();
 
-    // Utility
+        // Getters and setters
+        String getMood();               // TODO: Implement
+        String setMood();               // TODO: Implement
+        String getDisplayedMood();      // TODO: Implement
+        String getNetworkMood();        // TODO: Implement
+        String sendMoodToNetwork();     // TODO: Implement
 
-    // Moods
-    void doHappy();                     //TODO: Implement
-    void doSad();                       //TODO: Implement
-    void doHeart();                     //TODO: Implement
-    void doSkull();                     //TODO: Implement
-    void doDuck();                      //TODO: Implement
+        // Utility
+        // void servosEngage();            // TODO: Implement
+        // void servosDisengage();         // TODO: Implement
 
-    // Queue manipulations
-    void pushAction(...);               //FIXME: Variables?
-    void popAction(...);                //FIXME: Variables? Will need typedef
+        // Moods
+        // Declared virtual so they can be overridden
+        void doHappy();
+        void doSad();
+        void doHeart();
+        void doSkull();
+        void doDuck();
 
-private:
-    // int _pin;
-    static void messageReceived(String &s, String &t);
+    private:
+        Mood moods[NUMBER_OF_MOODS];
+        // ConnectLib() : moods();
+        Mood myMood;
+        Mood extrinsicMood;
+        Mood performedMood;
+        String receivedString;
+
+        static void messageReceived(String &s, String &t);
+        void handleButtons();
+        void changeMood();
+        void checkMood();
+        int getMoodIndexFromString(String moodString);
 };
 
 extern ConnectLib Connect;
 
-// void init(void);
-
-
-
 #endif
+
