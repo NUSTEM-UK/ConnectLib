@@ -14,7 +14,7 @@ ConnectLib::ConnectLib() {
     // or we get horrible linking errors.
     // To add moods, append them to this array, and adjust NUMBER_OF_MOODS
     // accordingly in ConnectLib.h
-    Mood moods[NUMBER_OF_MOODS] = {
+    static Mood moods[NUMBER_OF_MOODS] = {
         {0, "HAPPY", "B0000001010000001000101110", &ConnectLib::doHappy},
         {1, "SAD", "B0000001010000000111010001", &ConnectLib::doSad},
         {2, "HEART", "B0101011111111110111000100", &ConnectLib::doHeart},
@@ -131,7 +131,7 @@ void ConnectLib::checkMood() {
         // Display the associated icon
         Kniwwelino.MATRIXdrawIcon(performedMood.icon);
         // Now call the associated action function.
-        performedMood.callback();
+        (performedMood.callback)();
         // Display the associated icon
         // Do this after the callback too, in case we want to do
         // something funky along the way.
@@ -139,21 +139,21 @@ void ConnectLib::checkMood() {
     }
 }
 
-static void ConnectLib::messageReceived(String &topic, String &payload) {
+void ConnectLib::messageReceived(String &topic, String &message) {
     Serial.println(F("---> MESSAGE RECEIVED"));
 
   if (topic=="MESSAGE") {
-    receivedString = payload;
+    receivedString = message;
   } else if (topic=="MOOD") {
       //   Serial.println(F("Got a mood"));
-      int tempIndex = getMoodIndexFromString(payload);
+      int tempIndex = getMoodIndexFromString(message);
       if (tempIndex != -1) {
           extrinsicMood = moods[tempIndex];
       }
       // Serial.print(F("Mood is: "));
       // Serial.println(tempIndex);
 
-      // network_mood = payload;
+      // network_mood = message;
   }
 }
 

@@ -4,6 +4,19 @@
  * Northumbria University
  * See https://nustem.uk/connect
  * TODO: License
+ *
+ * Based on connect_test_piece_2
+ * Most of this _nearly_ works, but there are issues:
+ *   - Pointers to class methods aren't interchangeable with pointers to
+ *     general functions, so even if I can get performedMood.callback() to
+ *     execute properly, I don't think I can readily override the action
+ *     functions in the way I want (even with declaring virtual).
+ *   - Similar issue arises for registering my callback with
+ *     Kniwwelino.MQTTonMessage(messageReceived); that fails within the class
+ *     implementation.
+ *
+ * Somewhere around here, I have a big 'what's the point?' vibe. test_piece_2 works
+ * as required, so let's go back to that and continue hacking on it.
 */
 
 #ifndef Connect_h
@@ -41,17 +54,17 @@
 #define NTP_TIMEZONE			1
 #define NTP_PACKET_SIZE			48 // NTP time is in the first 48 bytes of message
 
-typedef void (*CallbackFunction)(void);
-
-typedef struct {
-    int index;
-    String text;
-    String icon;
-    CallbackFunction callback;
-} Mood;
 
 class ConnectLib{
     public:
+        typedef void (ConnectLib::*CallbackFunction)(void);
+
+        typedef struct {
+            int index;
+            String text;
+            String icon;
+            CallbackFunction callback;
+        } Mood;
         ConnectLib(); // Root object, needs variable stubs
 
         void begin();
@@ -77,14 +90,14 @@ class ConnectLib{
         void doDuck();
 
     private:
-        Mood moods[NUMBER_OF_MOODS];
+        static Mood moods[NUMBER_OF_MOODS];
         // ConnectLib() : moods();
         Mood myMood;
         Mood extrinsicMood;
         Mood performedMood;
         String receivedString;
 
-        static void messageReceived(String &s, String &t);
+        void messageReceived(String &s, String &t);
         void handleButtons();
         void changeMood();
         void checkMood();
