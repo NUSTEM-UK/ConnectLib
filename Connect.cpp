@@ -191,3 +191,12 @@ void connectSetup() {
     Serial.println();
 
 }
+
+void connectLoop() {
+    handleButtons();
+    // TODO: Think about whether this gets called in the loop,
+    //       or only from messageReceived(). The latter would
+    //       seem more appropriate and performative?
+    checkMood();
+    Kniwwelino.loop();
+}

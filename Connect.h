@@ -30,6 +30,7 @@ void doSad();
 void doHeart();
 void doSkull();
 void doDuck();
+void connectLoop();
 
 extern int servo1Speed;
 extern int servo2Speed;
