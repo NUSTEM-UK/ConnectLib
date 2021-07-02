@@ -200,3 +200,53 @@ void connectLoop() {
     checkMood();
     Kniwwelino.loop();
 }
+
+/**
+ * ACTION STUBS
+ * These are all defined weak so they can be overriden
+ * in the user sketch. Ah, C - there's always a way.
+ * (virtual methods in a class might be preferable,
+ * but this works for now.)
+*/
+
+__attribute__ ((weak))
+void doHappy() {
+    Serial.println(F("New mood received: HAPPY"));
+    // TODO: Default waving behaviour here?
+    // servos_engage();
+    // servo1Speed = 100;)
+    // for (int i = 0; i < 3; i++) {
+    //     Servo1.startEaseTo(180, servo1Speed, true);
+    //     Kniwwelino.RGBsetColorEffect(String("00FF00"), RGB_BLINK, -1);
+    //     while (Servo1.isMovingAndCallYield()) {
+    //         // Nothing here, intentionally
+    //     }
+    //     Servo1.startEaseTo(0, servo1Speed, true);
+    //     Kniwwelino.RGBsetColorEffect(String("FF0000"), RGB_GLOW, -1);
+    //     while (Servo1.isMovingAndCallYield()) {
+    //         // Nothing here, intentionally
+    //     }
+    // }
+    // Kniwwelino.RGBclear(); // Turn the LED off.
+    // servos_disengage();
+}
+
+__attribute__ ((weak))
+void doSad() {
+    Serial.println(F("New mood received: SAD"));
+}
+
+__attribute__ ((weak))
+void doHeart() {
+    Serial.println(F("New mood received: HEART"));
+}
+
+__attribute__ ((weak))
+void doSkull() {
+    Serial.println(F("New mood received: SKULL"));
+}
+
+__attribute__ ((weak))
+void doDuck() {
+    Serial.println(F("New mood received: DUCK"));
+}
