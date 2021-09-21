@@ -14,7 +14,7 @@
 
 #define WIFI_ON 1
 #define VERSION "0.02"
-#define NUMBER_OF_MOODS 5
+#define NUMBER_OF_MOODS 6
 
 // Function prototypes
 void servos_engage();
@@ -29,6 +29,7 @@ void doHappy();
 void doSad();
 void doHeart();
 void doSkull();
+void doSilly();
 void doDuck();
 void connectLoop();
 

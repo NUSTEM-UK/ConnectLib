@@ -181,7 +181,8 @@ void connectSetup() {
     moods[1] = {1, "SAD", "B0000001010000000111010001", &doSad};
     moods[2] = {2, "HEART", "B0101011111111110111000100", &doHeart};
     moods[3] = {3, "SKULL", "B0111010101111110111001110", &doSkull};
-    moods[4] = {4, "DUCK", "B0110011100011110111000000", &doDuck};
+    moods[4] = {4, "SILLY", "B1000100000111110001100011", &doSilly};
+    moods[5] = {5, "DUCK", "B0110011100011110111000000", &doDuck};
 
     // Cross-check that we have moods correctly.
     for (size_t i = 0; i < NUMBER_OF_MOODS; i++) {
@@ -244,6 +245,11 @@ void doHeart() {
 __attribute__ ((weak))
 void doSkull() {
     Serial.println(F("New mood received: SKULL"));
+}
+
+__attribute__ ((weak))
+void doSilly() {
+    Serial.println(F("New mood received: SILLY"));
 }
 
 __attribute__ ((weak))
