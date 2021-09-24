@@ -10,8 +10,8 @@ TODO: License
 #include <Arduino.h>
 #include "Connect.h"
 
-extern ServoEasing Servo1;
-extern ServoEasing Servo2;
+extern ServoEasing servo1;
+extern ServoEasing servo2;
 
 extern int servo1Speed = 20;
 extern int servo2Speed = 20;
@@ -31,13 +31,13 @@ Mood performedMood = moods[0];
 String received_string = "";
 
 void servos_engage() {
-    Servo1.attach(D5);
-    Servo2.attach(D7);
+    servo1.attach(D5);
+    servo2.attach(D7);
 }
 
 void servos_disengage() {
-    Servo1.detach();
-    Servo2.detach();
+    servo1.detach();
+    servo2.detach();
 }
 
 // TODO: check if this is part of the Kniwwelino base code
@@ -155,7 +155,7 @@ void checkMood() {
 }
 
 void connectSetup() {
-    Kniwwelino.begin("Connect_test_piece_3", WIFI_ON, true, false); // Wifi=true, Fastboot=true, MQTT Logging=false
+    Kniwwelino.begin("Connected_Device", WIFI_ON, true, false); // Wifi=true, Fastboot=true, MQTT Logging=false
     Serial.begin(115200);
     Serial.println();
     Serial.println(F("-------"));
@@ -178,10 +178,10 @@ void connectSetup() {
     Kniwwelino.RGBclear();
 
     moods[0] = {0, "HAPPY", "B0000001010000001000101110", &doHappy};
-    moods[1] = {1, "SAD", "B0000001010000000111010001", &doSad};
-    moods[2] = {2, "HEART", "B0101011111111110111000100", &doHeart};
+    moods[1] = {1, "HEART", "B0101011111111110111000100", &doHeart};
+    moods[2] = {2, "SAD", "B0000001010000000111010001", &doSad};
     moods[3] = {3, "SKULL", "B0111010101111110111001110", &doSkull};
-    moods[4] = {4, "SILLY", "B1000100000111110001100011", &doSilly};
+    moods[4] = {4, "SILLY", "B0101000000111110001100011", &doSilly};
     moods[5] = {5, "DUCK", "B0110011100011110111000000", &doDuck};
 
     // Cross-check that we have moods correctly.
