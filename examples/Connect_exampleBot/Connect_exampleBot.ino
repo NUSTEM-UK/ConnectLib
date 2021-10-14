@@ -1,7 +1,31 @@
 #include <Connect.h>
+#include <cppQueue.h>
+
+// TODO: Queue, abstract into library
+#define QUEUE_SIZE 10
+#define IMPLEMENTATION FIFO
 
 ServoEasing servo1;
 ServoEasing servo2;
+
+// TODO: Queue, abstract into library
+// First, the function pointer.
+// Got to love that variable-length argument list
+typedef void (*GenericFP)(void *, ...);
+
+// TODO: Queue, abstract into library
+typedef struct {
+    String targetDevice; // with which servo are we associated? (should be an object pointer, surely?)
+    GenericFP call; // Typically startEaseTo or moveTo/write, could also be waitForServo
+    int param1; // typically the target position, could be servo number for wait state
+    const char * animationType;
+    float servoSpeed;
+} servoQueueItem;
+
+// TODO: Queue, abstract into library
+cppQueue servo1queue(sizeof(servoQueueItem), QUEUE_SIZE, IMPLEMENTATION);
+servoQueueItem tempServoQueueItem;
+servoQueueItem tempServoQueueItem2;
 
 void servos_home() {
     setEasingTypeForAllServos(EASE_CUBIC_IN_OUT);
