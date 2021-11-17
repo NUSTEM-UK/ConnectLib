@@ -8,6 +8,7 @@ TODO: License
 
 #include <Kniwwelino.h>
 #include <Arduino.h>
+#include <ServoEasing.h>
 #include "Connect.h"
 
 extern ServoEasing servo1;
@@ -201,6 +202,22 @@ void connectLoop() {
     checkMood();
     Kniwwelino.loop();
 }
+
+/**
+ * SERVO OBJECT
+ * Connect servo object, with queue mechanism
+ * and interface to servoEasing.
+ **/
+ConnectServo::ConnectServo() : ServoEasing() {
+    // Construct the ServoEasing servo, to which we'll pass most things
+    // _servoPin = servoPin;
+    // ServoEasing _servo(_servoPin);
+    // Allocate queue
+    cppQueue _servoQueue(sizeof(servoQueueItem), QUEUE_SIZE, IMPLEMENTATION);
+    _waitingForOtherServo = false;
+    _waitingForLEDs = false;
+}
+
 
 /**
  * ACTION STUBS

@@ -11,10 +11,14 @@
 #define Connect_h
 #include <Kniwwelino.h>
 #include <ServoEasing.h>
+#include <cppQueue.h>
 
 #define WIFI_ON 1
-#define VERSION "0.02"
+#define VERSION "0.03"
 #define NUMBER_OF_MOODS 6
+// Queue parameters
+#define QUEUE_SIZE 20
+#define IMPLEMENTATION FIFO
 
 // Function prototypes
 void servos_engage();
@@ -32,6 +36,7 @@ void doSkull();
 void doSilly();
 void doDuck();
 void connectLoop();
+
 
 extern int servo1Speed;
 extern int servo2Speed;
@@ -60,6 +65,55 @@ extern String received_string;
 // static void messageReceived (String &t, String &p);
 // void handleButtons();
 // void checkMood();
+
+
+/**
+ * Servo class
+ **/
+// Define a type for servo queue items.
+
+// generic function pointer.
+// Got to love that variable-length argument list
+typedef void (*GenericFP)(void *, ...);
+
+typedef struct {
+    String targetDevice;        // with which servo are we associated? (should be an object pointer, surely?)
+    GenericFP call;             // eg. startEaseTo, moveTo/write, waitForServo
+    int param1;                 // Target position or (for waitForServo) servo to wait on.
+    const char * animationType; // eg. 'EASE_CUBIC_IN_OUT'
+    int servoSpeed;             // Slew rate (perscentage: map to 0-255. Servo theoretical max is around 200 degrees/sec, ~80%)
+} servoQueueItem;
+
+// Define Connect servo class
+class ConnectServo : public ServoEasing {
+    public:
+        // TODO: check return types of all these.
+        ConnectServo();
+        void startEaseTo(int targetPos, const char * animationType, int servoSpeed);
+        void moveTo(int targetPos);
+        void write(int targetPos); // duplicate of moveTo.
+        bool waitingForOtherServo();
+        bool waitingForLEDs();
+        bool isMoving();
+        void enqueue(servoQueueItem item);
+        void dequeue();
+        void attach();
+        void detach();
+        void begin();
+    private:
+        ServoEasing _servo;
+        cppQueue _servoQueue;
+        servoQueueItem _tempServoQueueItem;
+        servoQueueItem _tempServoQueueItem2;
+        int _servoPin;
+        int _currentPos;
+        int _targetPos;
+        int _servoSpeed;
+        const char * _animationType;
+        bool _waitingForOtherServo;
+        bool _waitingForLEDs;
+
+}
 
 
 #endif
