@@ -10,40 +10,37 @@
 #ifndef Connect_h
 #define Connect_h
 #include <Kniwwelino.h>
-#include <ServoEasing.h>
-#include <cppQueue.h>
+#include <ConnectServo.h>
 
 #define WIFI_ON 1
 #define VERSION "0.03"
 #define NUMBER_OF_MOODS 6
-// Queue parameters
-#define QUEUE_SIZE 20
-#define IMPLEMENTATION FIFO
 
 // Function prototypes
-void servos_engage();
-void servos_disengage();
 static void messageReceived(String &t, String &p);
 int getMoodIndexFromString(String moodString);
 void change_mood();
 void handleButtons();
 void checkMood();
 void connectSetup();
+// Mood prototypes (all declared weak so they can be overridden)
 void doHappy();
 void doSad();
 void doHeart();
 void doSkull();
 void doSilly();
 void doDuck();
+// Main event loop
 void connectLoop();
+// Helper function to dispatch both sides of the block/unblock callback
+void servoWaitForServo(ConnectServo&, ConnectServo&);
 
-
-extern int servo1Speed;
-extern int servo2Speed;
-
+/**
+ * Mood structures and supporting scafolding
+ */
 // We need a function pointer type to include in our Mood struct
 typedef void (*CallbackFunction)(void);
-
+// ...and the struct itself
 typedef struct {
     int index;
     String text;
@@ -66,54 +63,11 @@ extern String received_string;
 // void handleButtons();
 // void checkMood();
 
-
 /**
- * Servo class
- **/
-// Define a type for servo queue items.
-
-// generic function pointer.
-// Got to love that variable-length argument list
-typedef void (*GenericFP)(void *, ...);
-
-typedef struct {
-    String targetDevice;        // with which servo are we associated? (should be an object pointer, surely?)
-    GenericFP call;             // eg. startEaseTo, moveTo/write, waitForServo
-    int param1;                 // Target position or (for waitForServo) servo to wait on.
-    const char * animationType; // eg. 'EASE_CUBIC_IN_OUT'
-    int servoSpeed;             // Slew rate (perscentage: map to 0-255. Servo theoretical max is around 200 degrees/sec, ~80%)
-} servoQueueItem;
-
-// Define Connect servo class
-class ConnectServo : public ServoEasing {
-    public:
-        // TODO: check return types of all these.
-        ConnectServo();
-        void startEaseTo(int targetPos, const char * animationType, int servoSpeed);
-        void moveTo(int targetPos);
-        void write(int targetPos); // duplicate of moveTo.
-        bool waitingForOtherServo();
-        bool waitingForLEDs();
-        bool isMoving();
-        void enqueue(servoQueueItem item);
-        void dequeue();
-        void attach();
-        void detach();
-        void begin();
-    private:
-        ServoEasing _servo;
-        cppQueue _servoQueue;
-        servoQueueItem _tempServoQueueItem;
-        servoQueueItem _tempServoQueueItem2;
-        int _servoPin;
-        int _currentPos;
-        int _targetPos;
-        int _servoSpeed;
-        const char * _animationType;
-        bool _waitingForOtherServo;
-        bool _waitingForLEDs;
-
-}
+ * Callback for unblocking of objects
+ * Signal is simply the pin that's to be unblocked.
+ */
+Signal<uint8_t> unblockServoSignal;
 
 
 #endif

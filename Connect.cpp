@@ -6,22 +6,15 @@ Jonathan Sanderson, Northumbria University, July 2021
 TODO: License
 */
 
-#include <Kniwwelino.h>
-#include <Arduino.h>
-#include <ServoEasing.h>
+// #include <Kniwwelino.h>
+// #include <Arduino.h>
+// #include <ServoEasing.h>
 #include "Connect.h"
-
-extern ServoEasing servo1;
-extern ServoEasing servo2;
-
-extern int servo1Speed = 20;
-extern int servo2Speed = 20;
 
 // Initialise the mood array. Doesn't work correctly if I move this to
 // above setup() (first string is truncated).
 // To add moods, append them to this array, and adjust NUMBER_OF_MOODS
 // accordingly.
-
 Mood moods[NUMBER_OF_MOODS];
 
 // Start happy, because we're optimistic about the world
@@ -30,16 +23,6 @@ Mood extrinsicMood = moods[0];
 Mood performedMood = moods[0];
 
 String received_string = "";
-
-void servos_engage() {
-    servo1.attach(D5);
-    servo2.attach(D7);
-}
-
-void servos_disengage() {
-    servo1.detach();
-    servo2.detach();
-}
 
 // TODO: check if this is part of the Kniwwelino base code
 static void messageReceived(String &topic, String &payload) {
@@ -204,18 +187,11 @@ void connectLoop() {
 }
 
 /**
- * SERVO OBJECT
- * Connect servo object, with queue mechanism
- * and interface to servoEasing.
- **/
-ConnectServo::ConnectServo() : ServoEasing() {
-    // Construct the ServoEasing servo, to which we'll pass most things
-    // _servoPin = servoPin;
-    // ServoEasing _servo(_servoPin);
-    // Allocate queue
-    cppQueue _servoQueue(sizeof(servoQueueItem), QUEUE_SIZE, IMPLEMENTATION);
-    _waitingForOtherServo = false;
-    _waitingForLEDs = false;
+ * Helper function to enqueue events for both sides of a waitfor/message pair
+ */
+void servoWaitForServo(ConnectServo& servoWaiting, ConnectServo& waitingFor) {
+    servoWaiting.queueWaitForServo(waitingFor.getPin());
+    waitingFor.queueMessageServo(servoWaiting.getPin());
 }
 
 
@@ -272,4 +248,18 @@ void doSilly() {
 __attribute__ ((weak))
 void doDuck() {
     Serial.println(F("New mood received: DUCK"));
+}
+
+
+/**
+ * Inter-object messaging callbacks
+ * Uses Callback library
+ */
+
+class MessageManager {
+    ConnectServo& servoFrom;
+    ConnectServo& servoTo;
+public:
+
+
 }
