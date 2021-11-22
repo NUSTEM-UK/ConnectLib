@@ -33,8 +33,6 @@ void doSilly();
 void doDuck();
 // Main event loop
 void connectLoop();
-// Helper function to dispatch both sides of the block/unblock callback
-void servoWaitForServo(ConnectServo&, ConnectServo&);
 
 /**
  * Mood structures and supporting scafolding

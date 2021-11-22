@@ -187,14 +187,6 @@ void connectLoop() {
 }
 
 /**
- * Helper function to enqueue events for both sides of a waitfor/message pair
- */
-void servoWaitForServo(ConnectServo& servoWaiting, ConnectServo& waitingFor) {
-    servoWaiting.queueWaitForServo(waitingFor.getPin());
-    waitingFor.queueMessageServo(servoWaiting.getPin());
-}
-
-/**
  * ACTION STUBS
  * These are all defined weak so they can be overriden
  * in the user sketch. Ah, C - there's always a way.

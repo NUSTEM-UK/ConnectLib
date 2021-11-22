@@ -22,7 +22,7 @@ void setup() {
     servoWaitForServo(servo2, servo1);
     servo1.queueEaseTo(180, EASE_CUBIC_IN_OUT, 60);
     servo2.queueEaseTo(180, EASE_CUBIC_IN_OUT, 60);
-    servo2.queueEaseTo(0, EASE_CUBIC_IN_OUT, 255);
+    servo2.queueMoveTo(0);
 }
 
 void loop() {
