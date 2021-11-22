@@ -10,35 +10,36 @@
 #ifndef Connect_h
 #define Connect_h
 #include <Kniwwelino.h>
-#include <ServoEasing.h>
+#include <ConnectServo.h>
+// #include <ServoMessenger.h>
 
 #define WIFI_ON 1
-#define VERSION "0.02"
+#define VERSION "0.03"
 #define NUMBER_OF_MOODS 6
 
 // Function prototypes
-void servos_engage();
-void servos_disengage();
 static void messageReceived(String &t, String &p);
 int getMoodIndexFromString(String moodString);
 void change_mood();
 void handleButtons();
 void checkMood();
 void connectSetup();
+// Mood prototypes (all declared weak so they can be overridden)
 void doHappy();
 void doSad();
 void doHeart();
 void doSkull();
 void doSilly();
 void doDuck();
+// Main event loop
 void connectLoop();
 
-extern int servo1Speed;
-extern int servo2Speed;
-
+/**
+ * Mood structures and supporting scafolding
+ */
 // We need a function pointer type to include in our Mood struct
 typedef void (*CallbackFunction)(void);
-
+// ...and the struct itself
 typedef struct {
     int index;
     String text;
@@ -61,6 +62,7 @@ extern String received_string;
 // void handleButtons();
 // void checkMood();
 
+// extern ServoMessenger ConnectMessenger;
 
 #endif
 
