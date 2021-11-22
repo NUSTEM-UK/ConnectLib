@@ -194,7 +194,6 @@ void servoWaitForServo(ConnectServo& servoWaiting, ConnectServo& waitingFor) {
     waitingFor.queueMessageServo(servoWaiting.getPin());
 }
 
-
 /**
  * ACTION STUBS
  * These are all defined weak so they can be overriden
@@ -250,16 +249,3 @@ void doDuck() {
     Serial.println(F("New mood received: DUCK"));
 }
 
-
-/**
- * Inter-object messaging callbacks
- * Uses Callback library
- */
-
-class MessageManager {
-    ConnectServo& servoFrom;
-    ConnectServo& servoTo;
-public:
-
-
-}

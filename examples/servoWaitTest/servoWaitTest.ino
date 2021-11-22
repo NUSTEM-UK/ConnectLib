@@ -9,6 +9,8 @@ static const uint8_t servo2Pin = D7;
 
 void setup() {
     Serial.begin(115200);
+    delay(200);
+    Serial.println();
     Serial.println();
     Serial.println("Starting...");
     servo1.setPin(servo1Pin);
@@ -20,9 +22,12 @@ void setup() {
     servoWaitForServo(servo2, servo1);
     servo1.queueEaseTo(180, EASE_CUBIC_IN_OUT, 60);
     servo2.queueEaseTo(180, EASE_CUBIC_IN_OUT, 60);
+    servo2.queueEaseTo(0, EASE_CUBIC_IN_OUT, 255);
 }
 
 void loop() {
+    // servo1.update();
+    // servo2.update();
     if (!servo1.update()) {
         // It's stopped with an empty queue, so we're done
         // Serial.println("Disconnecting servo 1");

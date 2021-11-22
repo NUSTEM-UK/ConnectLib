@@ -11,6 +11,7 @@
 #define Connect_h
 #include <Kniwwelino.h>
 #include <ConnectServo.h>
+// #include <ServoMessenger.h>
 
 #define WIFI_ON 1
 #define VERSION "0.03"
@@ -63,12 +64,7 @@ extern String received_string;
 // void handleButtons();
 // void checkMood();
 
-/**
- * Callback for unblocking of objects
- * Signal is simply the pin that's to be unblocked.
- */
-Signal<uint8_t> unblockServoSignal;
-
+extern ServoMessenger ConnectMessenger;
 
 #endif
 
