@@ -28,6 +28,7 @@ void setup() {
 void loop() {
     // servo1.update();
     // servo2.update();
+    // TODO: Need a timeout on detach, and some neater way of re-attaching the servos.
     if (!servo1.update()) {
         // It's stopped with an empty queue, so we're done
         // Serial.println("Disconnecting servo 1");

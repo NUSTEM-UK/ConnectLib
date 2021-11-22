@@ -64,7 +64,7 @@ extern String received_string;
 // void handleButtons();
 // void checkMood();
 
-extern ServoMessenger ConnectMessenger;
+// extern ServoMessenger ConnectMessenger;
 
 #endif
 
