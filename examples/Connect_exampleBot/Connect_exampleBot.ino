@@ -33,8 +33,8 @@ void setup() {
 
 void loop() {
     connectLoop();
-    servo1.update();
-    servo2.update();
+    // servo1.update();
+    // servo2.update();
 }
 
 void doHappy() {
@@ -48,9 +48,6 @@ void doHappy() {
     servoWaitForServo(servo2, servo1);
     servo1.queueEaseTo(180, EASE_CUBIC_IN_OUT, 60);
     servo2.queueEaseTo(180, EASE_CUBIC_IN_OUT, 60);
-    servo2.queueMoveTo(0);
-    servo2.queueMoveTo(180);
-    servo2.queueMoveTo(0);
 }
 
 void doSad() {

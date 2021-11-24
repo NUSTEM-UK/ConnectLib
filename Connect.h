@@ -34,6 +34,8 @@ void doDuck();
 // Main event loop
 void connectLoop();
 
+void updateConnectServos();
+
 /**
  * Mood structures and supporting scafolding
  */
