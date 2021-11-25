@@ -33,6 +33,8 @@ void setup() {
 
 void loop() {
     connectLoop();
+    // Servo updates removed here - called via ServoMessenger object
+    // in connectLoop(). Limitation of Ardublockly.
     // servo1.update();
     // servo2.update();
 }

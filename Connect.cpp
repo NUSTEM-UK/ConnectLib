@@ -178,19 +178,13 @@ void connectSetup() {
 }
 
 void connectLoop() {
-    updateConnectServos();
     handleButtons();
     // TODO: Think about whether this gets called in the loop,
     //       or only from messageReceived(). The latter would
     //       seem more appropriate and performative?
     checkMood();
-    updateConnectServos();
     Kniwwelino.loop();
-    // It's really clunky to call update ~twice~ three times in the loop, but otherwise
-    // the servos don't get enough time. Yikes.
-    // twice is almost good enough, maybe
-    // TODO: troubleshoot this.
-    updateConnectServos();
+    ConnectMessenger.updateServos();
 }
 
 /**
