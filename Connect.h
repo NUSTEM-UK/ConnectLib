@@ -34,6 +34,8 @@ void doDuck();
 // Main event loop
 void connectLoop();
 
+// void updateConnectServos();
+
 /**
  * Mood structures and supporting scafolding
  */
@@ -62,7 +64,7 @@ extern String received_string;
 // void handleButtons();
 // void checkMood();
 
-// extern ServoMessenger ConnectMessenger;
+extern ServoMessenger ConnectMessenger;
 
 #endif
 

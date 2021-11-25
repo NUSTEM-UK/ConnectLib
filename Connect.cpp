@@ -184,6 +184,7 @@ void connectLoop() {
     //       seem more appropriate and performative?
     checkMood();
     Kniwwelino.loop();
+    ConnectMessenger.updateServos();
 }
 
 /**
