@@ -174,8 +174,13 @@ void connectSetup() {
     Kniwwelino.MQTTsubscribe("MOOD");
     #endif
 
-    Kniwwelino.RGBsetBrightness((int)200);
+    Kniwwelino.RGBsetBrightness((int)150);
     Kniwwelino.RGBclear();
+    Kniwwelino.MATRIXdrawIcon(ICON_SMILE);
+    #if WIFI_ON
+    Kniwwelino.MQTTpublish("hello_my_name_is", String(Kniwwelino.getMAC()));
+    #endif
+    delay(1000);
 
     moods[0] = {0, "HAPPY", "B0000001010000001000101110", &doHappy};
     moods[1] = {1, "HEART", "B0101011111111110111000100", &doHeart};

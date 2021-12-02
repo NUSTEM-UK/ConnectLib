@@ -21,22 +21,10 @@ void setup() {
     servo1.setPin(servo1Pin);
     servo2.setPin(servo2Pin);
     delay(500);
-
-    Kniwwelino.MATRIXdrawIcon(ICON_SMILE);
-    #if WIFI_ON
-    Kniwwelino.MQTTpublish("hello_my_name_is", String(Kniwwelino.getMAC()));
-    #endif
-
-    delay(1500);
-
 }
 
 void loop() {
     connectLoop();
-    // Servo updates removed here - called via ServoMessenger object
-    // in connectLoop(). Limitation of Ardublockly.
-    // servo1.update();
-    // servo2.update();
 }
 
 void doHappy() {
