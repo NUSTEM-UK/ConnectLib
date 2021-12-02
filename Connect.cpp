@@ -206,6 +206,7 @@ void connectLoop() {
     // FIXME: Looks like this break everything: added to messageReceived()
     // checkMood();
     Kniwwelino.loop();
+    ConnectMessenger.updateServos();
 }
 
 /**
