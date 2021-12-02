@@ -123,19 +123,33 @@ void handleButtons() {
 
 void checkMood() {
     // Serial.println("Mood check");
-    if (extrinsicMood.index != performedMood.index) {
-        // We have a new mood to represent
-        performedMood = extrinsicMood;
-        myMood = extrinsicMood;
-        // Display the associated icon
-        Kniwwelino.MATRIXdrawIcon(performedMood.icon);
-        // Now call the associated action function.
-        performedMood.callback();
-        // Display the associated icon
-        // Do this after the callback too, in case we want to do
-        // something funky along the way.
-        Kniwwelino.MATRIXdrawIcon(performedMood.icon);
-    }
+
+    // ----- CUT HERE -----
+    // For debugging/development, we ran as this:
+    // Check if new network mood is different from performed mood
+    // if (extrinsicMood.index != performedMood.index) {
+    //     // We have a new mood to represent
+    //     performedMood = extrinsicMood;
+    //     myMood = extrinsicMood;
+    //     // Display the associated icon
+    //     Kniwwelino.MATRIXdrawIcon(performedMood.icon);
+    //     // Now call the associated action function.
+    //     performedMood.callback();
+    //     // Display the associated icon
+    //     // Do this after the callback too, in case we want to do
+    //     // something funky along the way.
+    //     Kniwwelino.MATRIXdrawIcon(performedMood.icon);
+    // }
+    // ----- CUT HERE -----
+
+    // ...but for deployment, we now thing we want to respond
+    // to every mood recevied. This could get mad, and probably
+    // needs a rate limit.
+    performedMood = extrinsicMood;
+    myMood = extrinsicMood;
+    performedMood.callback();
+    Kniwwelino.MATRIXdrawIcon(performedMood.icon);
+
 }
 
 void connectSetup() {
