@@ -36,6 +36,8 @@ static void messageReceived(String &topic, String &payload) {
       if (tempIndex != -1) {
           extrinsicMood = moods[tempIndex];
       }
+      // Check mood here, rather than in main loop
+      checkMood();
       // Serial.print(F("Mood is: "));
       // Serial.println(tempIndex);
 
@@ -196,7 +198,8 @@ void connectLoop() {
     // TODO: Think about whether this gets called in the loop,
     //       or only from messageReceived(). The latter would
     //       seem more appropriate and performative?
-    checkMood();
+    // FIXME: Looks like this break everything: added to messageReceived()
+    // checkMood();
     Kniwwelino.loop();
 }
 
