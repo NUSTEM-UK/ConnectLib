@@ -1,3 +1,5 @@
+// FIXME: This is now obsolete code, 2021-12-20 Remove?
+
 #include <Connect.h>
 
 ServoEasing servo1;
@@ -15,7 +17,7 @@ void setup() {
 
     Kniwwelino.MATRIXdrawIcon(ICON_SMILE);
     #if WIFI_ON
-    Kniwwelino.MQTTpublish("hello_my_name_is", String(Kniwwelino.getMAC()));
+    Kniwwelino.MQTTpublish(F("hello_my_name_is"), String(Kniwwelino.getMAC()));
     #endif
 
     delay(1500);

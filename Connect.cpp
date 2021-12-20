@@ -170,24 +170,24 @@ void connectSetup() {
     #if WIFI_ON
     Kniwwelino.MQTTsetGroup(String("NUSTEM"));
     Kniwwelino.MQTTonMessage(messageReceived);
-    Kniwwelino.MQTTsubscribe("MESSAGE");
-    Kniwwelino.MQTTsubscribe("MOOD");
+    Kniwwelino.MQTTsubscribe(F("MESSAGE"));
+    Kniwwelino.MQTTsubscribe(F("MOOD"));
     #endif
 
     Kniwwelino.RGBsetBrightness((int)150);
     Kniwwelino.RGBclear();
     Kniwwelino.MATRIXdrawIcon(ICON_SMILE);
     #if WIFI_ON
-    Kniwwelino.MQTTpublish("hello_my_name_is", String(Kniwwelino.getMAC()));
+    Kniwwelino.MQTTpublish(F("hello_my_name_is"), String(Kniwwelino.getMAC()));
     #endif
     delay(1000);
 
-    moods[0] = {0, "HAPPY", "B0000001010000001000101110", &doHappy};
-    moods[1] = {1, "HEART", "B0101011111111110111000100", &doHeart};
-    moods[2] = {2, "SAD", "B0000001010000000111010001", &doSad};
-    moods[3] = {3, "SKULL", "B0111010101111110111001110", &doSkull};
-    moods[4] = {4, "SILLY", "B0101000000111110001100011", &doSilly};
-    moods[5] = {5, "DUCK", "B0110011100011110111000000", &doDuck};
+    moods[0] = {0, F("HAPPY"), F("B0000001010000001000101110"), &doHappy};
+    moods[1] = {1, F("HEART"), F("B0101011111111110111000100"), &doHeart};
+    moods[2] = {2, F("SAD"), F("B0000001010000000111010001"), &doSad};
+    moods[3] = {3, F("SKULL"), F("B0111010101111110111001110"), &doSkull};
+    moods[4] = {4, F("SILLY"), F("B0101000000111110001100011"), &doSilly};
+    moods[5] = {5, F("DUCK"), F("B0110011100011110111000000"), &doDuck};
 
     // Cross-check that we have moods correctly.
     for (size_t i = 0; i < NUMBER_OF_MOODS; i++) {

@@ -12,7 +12,7 @@ void setup() {
     delay(200);
     Serial.println();
     Serial.println();
-    Serial.println("Starting...");
+    Serial.println(F("Starting..."));
     servo1.setPin(servo1Pin);
     servo2.setPin(servo2Pin);
     delay(500);
