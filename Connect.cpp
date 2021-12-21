@@ -194,6 +194,10 @@ void connectSetup() {
         Serial.print(moods[i].text);
         Serial.print(F(" : "));
     }
+
+    // Confirm we're not currently zombied
+    isSerialZombie = false;
+
     Serial.println();
 
 }

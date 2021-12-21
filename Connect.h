@@ -66,5 +66,8 @@ extern String received_string;
 
 extern ServoMessenger ConnectMessenger;
 
+// Setting up for direct serial control
+bool isSerialZombie;
+
 #endif
 
