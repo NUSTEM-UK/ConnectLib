@@ -20,6 +20,8 @@ void setup() {
 
     servo1.setPin(servo1Pin);
     servo2.setPin(servo2Pin);
+    servo1.setHome(90);
+    servo2.setHome(90);
     delay(500);
 }
 
