@@ -14,7 +14,7 @@
 // #include <ServoMessenger.h>
 
 #define WIFI_ON 1
-#define VERSION "0.03"
+#define VERSION "0.04"
 #define NUMBER_OF_MOODS 6
 
 // Function prototypes

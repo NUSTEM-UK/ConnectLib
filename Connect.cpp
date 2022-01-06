@@ -145,11 +145,13 @@ void checkMood() {
     // ----- CUT HERE -----
 
     // ...but for deployment, we now thing we want to respond
-    // to every mood recevied. This could get mad, and probably
+    // to every mood received. This could get mad, and probably
     // needs a rate limit.
+    // FIXED: rate limit. Now checked when messageReceived(), not in loop.
     performedMood = extrinsicMood;
     myMood = extrinsicMood;
     performedMood.callback();
+    // TODO: Animate the mood change
     Kniwwelino.MATRIXdrawIcon(performedMood.icon);
 
 }
