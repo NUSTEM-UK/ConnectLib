@@ -11,7 +11,7 @@
 #define Connect_h
 #include <Kniwwelino.h>
 #include <ConnectServo.h>
-// #include <ServoMessenger.h>
+#include <SoftwareSerial.h>
 
 #define WIFI_ON 1
 #define VERSION "0.04"
@@ -67,7 +67,11 @@ extern String received_string;
 extern ServoMessenger ConnectMessenger;
 
 // Setting up for direct serial control
-bool isSerialZombie;
+extern bool isSerialZombie;
+extern String received;
+extern char incomingChar;
+#define RX_PIN D2
+#define TX_PIN D1
 
 #endif
 
