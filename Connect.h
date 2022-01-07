@@ -67,11 +67,11 @@ extern String received_string;
 extern ServoMessenger ConnectMessenger;
 
 // Setting up for direct serial control
-extern bool isSerialZombie;
-extern String received;
-extern char incomingChar;
-#define RX_PIN D2
-#define TX_PIN D1
+// extern bool isSerialZombie;
+// extern String received;
+// extern char incomingChar;
+#define RX_PIN D6 // would use D2 on a D1 Mini
+#define TX_PIN D0 // would use D1 on a D1 Mini
 
 #endif
 

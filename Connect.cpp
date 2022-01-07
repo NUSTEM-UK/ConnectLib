@@ -25,30 +25,29 @@ Mood performedMood = moods[0];
 String received_string = "";
 
 SoftwareSerial myPort(RX_PIN, TX_PIN, false, 256);
-const char *ack = "ACK ACK ACK"; // Serial acknowledgement string
 bool isSerialZombie = false;
-String received = "";
-char incomingChar = '\0';
+String received;
+char incomingChar = 0;
 
 // TODO: check if this is part of the Kniwwelino base code
 static void messageReceived(String &topic, String &payload) {
     Serial.println(F("---> MESSAGE RECEIVED"));
 
-  if (topic=="MESSAGE") {
-    received_string = payload;
-  } else if (topic=="MOOD") {
-      //   Serial.println(F("Got a mood"));
-      int tempIndex = getMoodIndexFromString(payload);
-      if (tempIndex != -1) {
-          extrinsicMood = moods[tempIndex];
-      }
-      // Check mood here, rather than in main loop
-      checkMood();
-      // Serial.print(F("Mood is: "));
-      // Serial.println(tempIndex);
+    if (topic=="MESSAGE") {
+        received_string = payload;
+    } else if (topic=="MOOD") {
+        //   Serial.println(F("Got a mood"));
+        int tempIndex = getMoodIndexFromString(payload);
+        if (tempIndex != -1) {
+            extrinsicMood = moods[tempIndex];
+        }
+        // Check mood here, rather than in main loop
+        checkMood();
+        // Serial.print(F("Mood is: "));
+        // Serial.println(tempIndex);
 
-      // network_mood = payload;
-  }
+        // network_mood = payload;
+    }
 }
 
 
@@ -164,8 +163,10 @@ void checkMood() {
 
 void checkSerialConnection() {
     // Has anything arrived over the software serial port?
+    // Serial.println(F("Checking serial connection"));
     if (myPort.available() > 0) {
         // Read incoming and append to string
+        Serial.println(F("Read character"));
         incomingChar = myPort.read();
         received += incomingChar;
 
@@ -175,10 +176,11 @@ void checkSerialConnection() {
             received.trim();
             // Now parse the received string, looking for ACK
             if (received == F("ACK")) {
-                Serial.print(received);
+                Serial.println(received);
                 Serial.println(F(" >>> CEDING CONTROL"));
+                delay(100); // Can be to fast for the Pico to handle?
                 // Respond in kind
-                myPort.write(ack);
+                myPort.write("ACK ACK ACK");
                 // Turn off Connect mood messaging stuff
                 // TODO: Check if this can be F'd. Tripped a compiler error when I tried.
                 Kniwwelino.MQTTunsubscribe("MOOD");
@@ -189,7 +191,7 @@ void checkSerialConnection() {
                 // 0 1 0 0 0
                 // 1 1 1 1 1
                 Kniwwelino.MATRIXdrawIcon(F("B1111100010001000100011111"));
-                Kniwwelino.MATRIXsetBlinkRate(MATRIX_BLINK_2HZ);
+                Kniwwelino.MATRIXsetBlinkRate(MATRIX_BLINK_1HZ);
                 // Flag that we're now a serial zombie
                 isSerialZombie = true;
 
@@ -299,7 +301,8 @@ void connectLoop() {
         handleButtons();
         ConnectMessenger.updateServos();
         // ...and check the SoftwareSerial port in case we're being zombied
-        // checkSerialConnection();
+        checkSerialConnection();
+        // debugSerialConnection();
     }
 }
 
