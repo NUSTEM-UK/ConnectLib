@@ -11,10 +11,10 @@
 #define Connect_h
 #include <Kniwwelino.h>
 #include <ConnectServo.h>
-// #include <ServoMessenger.h>
+#include <SoftwareSerial.h>
 
 #define WIFI_ON 1
-#define VERSION "0.03"
+#define VERSION "0.04"
 #define NUMBER_OF_MOODS 6
 
 // Function prototypes
@@ -65,6 +65,13 @@ extern String received_string;
 // void checkMood();
 
 extern ServoMessenger ConnectMessenger;
+
+// Setting up for direct serial control
+// extern bool isSerialZombie;
+// extern String received;
+// extern char incomingChar;
+#define RX_PIN D6 // would use D2 on a D1 Mini
+#define TX_PIN D0 // would use D1 on a D1 Mini
 
 #endif
 

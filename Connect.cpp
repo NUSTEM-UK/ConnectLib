@@ -24,25 +24,30 @@ Mood performedMood = moods[0];
 
 String received_string = "";
 
+SoftwareSerial myPort(RX_PIN, TX_PIN, false, 256);
+bool isSerialZombie = false;
+String received;
+char incomingChar = 0;
+
 // TODO: check if this is part of the Kniwwelino base code
 static void messageReceived(String &topic, String &payload) {
     Serial.println(F("---> MESSAGE RECEIVED"));
 
-  if (topic=="MESSAGE") {
-    received_string = payload;
-  } else if (topic=="MOOD") {
-      //   Serial.println(F("Got a mood"));
-      int tempIndex = getMoodIndexFromString(payload);
-      if (tempIndex != -1) {
-          extrinsicMood = moods[tempIndex];
-      }
-      // Check mood here, rather than in main loop
-      checkMood();
-      // Serial.print(F("Mood is: "));
-      // Serial.println(tempIndex);
+    if (topic=="MESSAGE") {
+        received_string = payload;
+    } else if (topic=="MOOD") {
+        //   Serial.println(F("Got a mood"));
+        int tempIndex = getMoodIndexFromString(payload);
+        if (tempIndex != -1) {
+            extrinsicMood = moods[tempIndex];
+        }
+        // Check mood here, rather than in main loop
+        checkMood();
+        // Serial.print(F("Mood is: "));
+        // Serial.println(tempIndex);
 
-      // network_mood = payload;
-  }
+        // network_mood = payload;
+    }
 }
 
 
@@ -145,13 +150,81 @@ void checkMood() {
     // ----- CUT HERE -----
 
     // ...but for deployment, we now thing we want to respond
-    // to every mood recevied. This could get mad, and probably
+    // to every mood received. This could get mad, and probably
     // needs a rate limit.
+    // FIXED: rate limit. Now checked when messageReceived(), not in loop.
     performedMood = extrinsicMood;
     myMood = extrinsicMood;
     performedMood.callback();
+    // TODO: Animate the mood change
     Kniwwelino.MATRIXdrawIcon(performedMood.icon);
 
+}
+
+void checkSerialConnection() {
+    // Has anything arrived over the software serial port?
+    // Serial.println(F("Checking serial connection"));
+    if (myPort.available() > 0) {
+        // Read incoming and append to string
+        Serial.println(F("Read character"));
+        incomingChar = myPort.read();
+        received += incomingChar;
+
+        // Check if we've received a newline terminator
+        if (incomingChar == '\n'){
+            // Trim the closing newline
+            received.trim();
+            // Now parse the received string, looking for ACK
+            if (received == F("ACK")) {
+                Serial.println(received);
+                Serial.println(F(" >>> CEDING CONTROL"));
+                delay(100); // Can be to fast for the Pico to handle?
+                // Respond in kind
+                myPort.write("ACK ACK ACK");
+                // Turn off Connect mood messaging stuff
+                // TODO: Check if this can be F'd. Tripped a compiler error when I tried.
+                Kniwwelino.MQTTunsubscribe("MOOD");
+                // Display hint we're in zombie mode
+                // 1 1 1 1 1
+                // 0 0 0 1 0
+                // 0 0 1 0 0
+                // 0 1 0 0 0
+                // 1 1 1 1 1
+                Kniwwelino.MATRIXdrawIcon(F("B1111100010001000100011111"));
+                Kniwwelino.MATRIXsetBlinkRate(MATRIX_BLINK_1HZ);
+                // Flag that we're now a serial zombie
+                isSerialZombie = true;
+
+                // SShort pause, then clear the capture string
+                delay(500);
+                received = "";
+            } else {
+                Serial.println(received);
+                Serial.println(F("Missed ACK, reset and try again"));
+                // Reset the capture string
+                received = "";
+            }
+        }
+    }
+}
+
+void parseSerialConnectionAndDriveDevices() {
+    // Get commands
+    if (myPort.available() > 0) {
+        // read incoming and append to capture string
+        incomingChar = myPort.read();
+        received += incomingChar;
+
+        // Check if we have a newline terminator
+        if (incomingChar == '\n') {
+            // Remove that closing newline
+            received.trim();
+            // Now send the received string to the ConnectMessenger object for handling
+            ConnectMessenger.serialCommand(received);
+            // Reset the capture string
+            received = "";
+        }
+    }
 }
 
 void connectSetup() {
@@ -194,19 +267,43 @@ void connectSetup() {
         Serial.print(moods[i].text);
         Serial.print(F(" : "));
     }
+
+    // Set up software serial connection for trainer bot
+    myPort.begin(57600);
+    if (!myPort) {
+        Serial.println(F("Invalid SoftwareSerial config"));
+        // while (1) {
+        //     // Stop here
+        //     delay(1000);
+        // }
+        // Keep going, assume we never want serial. Ulp.
+    }
+    Serial.println();
+    Serial.println(F("SoftwareSerial started"));
+
+    // Confirm we're not currently zombied
+    isSerialZombie = false;
+
     Serial.println();
 
 }
 
 void connectLoop() {
-    handleButtons();
-    // TODO: Think about whether this gets called in the loop,
-    //       or only from messageReceived(). The latter would
-    //       seem more appropriate and performative?
-    // FIXME: Looks like this break everything: added to messageReceived()
-    // checkMood();
+    // Update Kniwwelino stuff
     Kniwwelino.loop();
-    ConnectMessenger.updateServos();
+
+    // Everything else depends on serial zombie state
+    if (isSerialZombie) {
+        // We *are* a serial zombie, so do as bidden
+        parseSerialConnectionAndDriveDevices();
+    } else {
+        // Do normal things
+        handleButtons();
+        ConnectMessenger.updateServos();
+        // ...and check the SoftwareSerial port in case we're being zombied
+        checkSerialConnection();
+        // debugSerialConnection();
+    }
 }
 
 /**
