@@ -184,6 +184,7 @@ void checkSerialConnection() {
                 // Turn off Connect mood messaging stuff
                 // TODO: Check if this can be F'd. Tripped a compiler error when I tried.
                 Kniwwelino.MQTTunsubscribe("MOOD");
+
                 // Display hint we're in zombie mode
                 // 1 1 1 1 1
                 // 0 0 0 1 0
