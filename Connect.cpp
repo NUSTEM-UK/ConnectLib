@@ -199,6 +199,8 @@ void checkSerialConnection() {
                 // SShort pause, then clear the capture string
                 Kniwwelino.sleep(500);
                 received = "";
+                // Stop the I2C bus
+                // Kniwwelino.bgI2CStop(); // Removed because it's no better this way, and resets fail a bit
             } else {
                 Serial.println(received);
                 Serial.println(F("Missed ACK, reset and try again"));
@@ -254,7 +256,7 @@ void connectSetup() {
     #if WIFI_ON
     Kniwwelino.MQTTpublish(F("hello_my_name_is"), String(Kniwwelino.getMAC()));
     #endif
-    Kniwwelino.sleep(1000)
+    Kniwwelino.sleep(1000);
 
     moods[0] = {0, F("HAPPY"), F("B0000001010000001000101110"), &doHappy};
     moods[1] = {1, F("HEART"), F("B0101011111111110111000100"), &doHeart};
