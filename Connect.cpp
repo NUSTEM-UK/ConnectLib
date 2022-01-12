@@ -178,7 +178,8 @@ void checkSerialConnection() {
             if (received == F("ACK")) {
                 Serial.println(received);
                 Serial.println(F(" >>> CEDING CONTROL"));
-                delay(100); // Can be to fast for the Pico to handle?
+
+                Kniwwelino.sleep(80); // Can be to fast for the Pico to handle?
                 // Respond in kind
                 myPort.write("ACK ACK ACK");
                 // Turn off Connect mood messaging stuff
@@ -196,7 +197,7 @@ void checkSerialConnection() {
                 isSerialZombie = true;
 
                 // SShort pause, then clear the capture string
-                delay(500);
+                Kniwwelino.sleep(500);
                 received = "";
             } else {
                 Serial.println(received);
@@ -253,7 +254,7 @@ void connectSetup() {
     #if WIFI_ON
     Kniwwelino.MQTTpublish(F("hello_my_name_is"), String(Kniwwelino.getMAC()));
     #endif
-    delay(1000);
+    Kniwwelino.sleep(1000)
 
     moods[0] = {0, F("HAPPY"), F("B0000001010000001000101110"), &doHappy};
     moods[1] = {1, F("HEART"), F("B0101011111111110111000100"), &doHeart};
@@ -272,10 +273,6 @@ void connectSetup() {
     myPort.begin(57600);
     if (!myPort) {
         Serial.println(F("Invalid SoftwareSerial config"));
-        // while (1) {
-        //     // Stop here
-        //     delay(1000);
-        // }
         // Keep going, assume we never want serial. Ulp.
     }
     Serial.println();
