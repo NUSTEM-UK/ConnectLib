@@ -4,7 +4,7 @@ Arduino support for the Connect project, https://nustem.uk/connect
 
 ## Configuration
 
-Requires an `arduino_secrets.` as follows:
+Requires a file `arduino_secrets.h` as follows:
 
 ```cpp
 #define MQTT_PASS [password]
