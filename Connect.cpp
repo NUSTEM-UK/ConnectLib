@@ -96,7 +96,9 @@ void change_mood() {
     // Loop around moods (self-adjusting for number of moods.)
     // Note the obvious off-by-one error here, which took me
     // much longer to spot than now seems reasonable.
-    if (tempMoodIndex > (NUMBER_OF_MOODS-1)) {
+    // 2022-01-17: edited to skip over DUCK mood. Still in there,
+    //             but no longer accessible.
+    if (tempMoodIndex > (NUMBER_OF_MOODS-2)) {
         tempMoodIndex = 0;
     }
     Serial.println(F(">>>Changing mood"));
