@@ -21,6 +21,7 @@
 static void messageReceived(String &t, String &p);
 int getMoodIndexFromString(String moodString);
 void change_mood();
+void publish_mood();
 void handleButtons();
 void checkMood();
 void connectSetup();

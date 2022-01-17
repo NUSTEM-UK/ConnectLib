@@ -111,22 +111,29 @@ void change_mood() {
     Kniwwelino.MATRIXdrawIcon(extrinsicMood.icon);
 }
 
+
+void publish_mood() {
+    // Publish our mood to the network
+    Kniwwelino.MATRIXdrawIcon(ICON_ARROW_UP);
+    Kniwwelino.sleep((unsigned long)500);
+    #if WIFI_ON
+    Kniwwelino.MQTTpublish("MOOD", myMood.text); // May need to reorder this
+    #else
+    extrinsicMood = myMood;
+    // network_mood = String(my_icon);
+    #endif
+}
+
 void handleButtons() {
-    // Serial.println("Button check");
     if (Kniwwelino.BUTTONAclicked()) {
         Serial.println(F(">>>BUTTON press: A"));
-        change_mood();
+        // By default, change the mood. If we're inverted, publish instead.
+        isInverted ? publish_mood() : change_mood();
     }
     if (Kniwwelino.BUTTONBclicked()) {
         Serial.println(F(">>>BUTTON press: B"));
-        Kniwwelino.MATRIXdrawIcon(ICON_ARROW_UP);
-        Kniwwelino.sleep((unsigned long)500);
-        #if WIFI_ON
-        Kniwwelino.MQTTpublish("MOOD", myMood.text); // May need to reorder this
-        #else
-        extrinsicMood = myMood;
-        // network_mood = String(my_icon);
-        #endif
+        // By default, publish the mood. If we're inverted, change it instead.
+        isInverted ? change_mood() : publish_mood();
     }
 }
 
