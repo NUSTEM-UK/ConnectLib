@@ -116,7 +116,12 @@ void change_mood() {
 
 void publish_mood() {
     // Publish our mood to the network
-    Kniwwelino.MATRIXdrawIcon(ICON_ARROW_UP);
+    // Arrow direction depends on whether we're inverted or not
+    if (isInverted) {
+        Kniwwelino.MATRIXdrawIcon(ICON_ARROW_DOWN);
+    } else {
+        Kniwwelino.MATRIXdrawIcon(ICON_ARROW_UP);
+    }
     Kniwwelino.sleep((unsigned long)500);
     #if WIFI_ON
     Kniwwelino.MQTTpublish("MOOD", myMood.text); // May need to reorder this
