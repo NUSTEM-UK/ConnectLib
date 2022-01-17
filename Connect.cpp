@@ -29,6 +29,7 @@ SoftwareSerial myPort(RX_PIN, TX_PIN, false, 256);
 bool isSerialZombie = false;
 String received;
 char incomingChar = 0;
+int receivedMoodAnimationRate = 75;
 
 
 // TODO: check if this is part of the Kniwwelino base code
@@ -43,7 +44,9 @@ static void messageReceived(String &topic, String &payload) {
         if (tempIndex != -1) {
             extrinsicMood = moods[tempIndex];
         }
-        // Check mood here, rather than in main loop
+        // Play the received mood animation
+        receivedMoodWiggleAnimation();
+        // Act on the received mood
         checkMood();
         // Serial.print(F("Mood is: "));
         // Serial.println(tempIndex);
@@ -241,6 +244,35 @@ void parseSerialConnectionAndDriveDevices() {
             received = "";
         }
     }
+}
+
+void receivedMoodWiggleAnimation() {
+    // Display a wiggle animation to indicate a mood has been received
+    // TODO: This is horrid code, rewrite it so less horrid
+    for (int i = 0; i < 2; i++) {
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000100000000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000110000000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000011000000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000001100000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000000110000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000000010000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000000110000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000001100000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000011000000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000110000000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.loop(); // do background stuff...
+    }
+
 }
 
 void connectSetup() {

@@ -33,6 +33,7 @@ void doHeart();
 void doSkull();
 void doSilly();
 void doDuck();
+void receivedMoodWiggleAnimation();
 // Main event loop
 void connectLoop();
 
