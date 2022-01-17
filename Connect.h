@@ -24,6 +24,7 @@ void change_mood();
 void handleButtons();
 void checkMood();
 void connectSetup();
+void setInverted();
 // Mood prototypes (all declared weak so they can be overridden)
 void doHappy();
 void doSad();

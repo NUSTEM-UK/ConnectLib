@@ -22,12 +22,14 @@ Mood myMood = moods[0];
 Mood extrinsicMood = moods[0];
 Mood performedMood = moods[0];
 
-String received_string = "";
+bool isInverted = false; // Is the Kniwwelino mounted upside-down?
 
+String received_string = "";
 SoftwareSerial myPort(RX_PIN, TX_PIN, false, 256);
 bool isSerialZombie = false;
 String received;
 char incomingChar = 0;
+
 
 // TODO: check if this is part of the Kniwwelino base code
 static void messageReceived(String &topic, String &payload) {
@@ -255,12 +257,25 @@ void connectSetup() {
     #endif
     delay(1000);
 
-    moods[0] = {0, F("HAPPY"), F("B0000001010000001000101110"), &doHappy};
-    moods[1] = {1, F("HEART"), F("B0101011111111110111000100"), &doHeart};
-    moods[2] = {2, F("SAD"), F("B0000001010000000111010001"), &doSad};
-    moods[3] = {3, F("SKULL"), F("B0111010101111110111001110"), &doSkull};
-    moods[4] = {4, F("SILLY"), F("B0101000000111110001100011"), &doSilly};
-    moods[5] = {5, F("DUCK"), F("B0110011100011110111000000"), &doDuck};
+    // Check if we're inverted and assign mood icons accordingly.
+    if (isInverted)
+    {
+        Serial.println(F(">>> INVERTED, setting icons accordingly"));
+        moods[0] = {0, F("HAPPY"), F("B0111010001000000101000000"), &doHappy};
+        moods[1] = {1, F("HEART"), F("B0010001110111111111101010"), &doHeart};
+        moods[2] = {2, F("SAD"),   F("B1000101110000000101000000"), &doSad};
+        moods[3] = {3, F("SKULL"), F("B0111001110111111010101110"), &doSkull};
+        moods[4] = {4, F("SILLY"), F("B0001100011111110000001010"), &doSilly};
+        moods[5] = {5, F("DUCK"),  F("B0000001110011111110001100"), &doDuck};
+    } else {
+        moods[0] = {0, F("HAPPY"), F("B0000001010000001000101110"), &doHappy};
+        moods[1] = {1, F("HEART"), F("B0101011111111110111000100"), &doHeart};
+        moods[2] = {2, F("SAD"), F("B0000001010000000111010001"), &doSad};
+        moods[3] = {3, F("SKULL"), F("B0111010101111110111001110"), &doSkull};
+        moods[4] = {4, F("SILLY"), F("B0101000000111110001100011"), &doSilly};
+        moods[5] = {5, F("DUCK"), F("B0110011100011110111000000"), &doDuck};
+    }
+
 
     // Cross-check that we have moods correctly.
     for (size_t i = 0; i < NUMBER_OF_MOODS; i++) {
@@ -361,3 +376,14 @@ void doDuck() {
     Serial.println(F("New mood received: DUCK"));
 }
 
+void setInverted() {
+    isInverted = true;
+    // TODO: check whether blockly code generation pastes call before or after
+    //       connectSetup(), we shouldn't need this in two places.
+    moods[0] = {0, F("HAPPY"), F("B0111010001000000101000000"), &doHappy};
+    moods[1] = {1, F("HEART"), F("B0010001110111111111101010"), &doHeart};
+    moods[2] = {2, F("SAD"),   F("B1000101110000000101000000"), &doSad};
+    moods[3] = {3, F("SKULL"), F("B0111001110111111010101110"), &doSkull};
+    moods[4] = {4, F("SILLY"), F("B0001100011111110000001010"), &doSilly};
+    moods[5] = {5, F("DUCK"),  F("B0000001110011111110001100"), &doDuck};
+}
