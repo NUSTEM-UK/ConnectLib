@@ -35,6 +35,7 @@ int receivedMoodAnimationRate = 75;
 
 // TODO: check if this is part of the Kniwwelino base code
 static void messageReceived(String &topic, String &payload) {
+    // FIXME: probably shouldn't have a Serial operation in a callback
     Serial.println(F("---> MESSAGE RECEIVED"));
 
     if (topic=="MESSAGE") {
@@ -61,6 +62,11 @@ int getMoodIndexFromString (String moodString) {
         // This is ugly because we always loop through the entire array,
         // but the obvious alternatives seem worse
         // TODO: find an obvious alternative that isn't worse.
+        // TODO: it's to set a flag when we find the mood, and then
+        //       return the index. Loop tests the flag.
+        //       ...but still need to ensure we don't go beyond the
+        //       end of the array.
+        //       ...so maybe leave this as-is. It seeems to work fast enough.
         // Serial.print(F("Stepping through: "));
         // Serial.print(i);
         // Serial.print(moods[i].text);
