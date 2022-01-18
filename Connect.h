@@ -20,10 +20,12 @@
 // Function prototypes
 static void messageReceived(String &t, String &p);
 int getMoodIndexFromString(String moodString);
-void change_mood();
+void change_mood(bool);
+void publish_mood();
 void handleButtons();
 void checkMood();
 void connectSetup();
+void setInverted(bool);
 // Mood prototypes (all declared weak so they can be overridden)
 void doHappy();
 void doSad();
@@ -31,6 +33,7 @@ void doHeart();
 void doSkull();
 void doSilly();
 void doDuck();
+void receivedMoodWiggleAnimation();
 // Main event loop
 void connectLoop();
 

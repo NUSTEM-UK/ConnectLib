@@ -22,12 +22,15 @@ Mood myMood = moods[0];
 Mood extrinsicMood = moods[0];
 Mood performedMood = moods[0];
 
-String received_string = "";
+bool isInverted = false; // Is the Kniwwelino mounted upside-down?
 
+String received_string = "";
 SoftwareSerial myPort(RX_PIN, TX_PIN, false, 256);
 bool isSerialZombie = false;
 String received;
 char incomingChar = 0;
+int receivedMoodAnimationRate = 75;
+
 
 // TODO: check if this is part of the Kniwwelino base code
 static void messageReceived(String &topic, String &payload) {
@@ -41,7 +44,9 @@ static void messageReceived(String &topic, String &payload) {
         if (tempIndex != -1) {
             extrinsicMood = moods[tempIndex];
         }
-        // Check mood here, rather than in main loop
+        // Play the received mood animation
+        receivedMoodWiggleAnimation();
+        // Act on the received mood
         checkMood();
         // Serial.print(F("Mood is: "));
         // Serial.println(tempIndex);
@@ -94,7 +99,9 @@ void change_mood() {
     // Loop around moods (self-adjusting for number of moods.)
     // Note the obvious off-by-one error here, which took me
     // much longer to spot than now seems reasonable.
-    if (tempMoodIndex > (NUMBER_OF_MOODS-1)) {
+    // 2022-01-17: edited to skip over DUCK mood. Still in there,
+    //             but no longer accessible.
+    if (tempMoodIndex > (NUMBER_OF_MOODS-2)) {
         tempMoodIndex = 0;
     }
     Serial.println(F(">>>Changing mood"));
@@ -109,22 +116,34 @@ void change_mood() {
     Kniwwelino.MATRIXdrawIcon(extrinsicMood.icon);
 }
 
+
+void publish_mood() {
+    // Publish our mood to the network
+    // Arrow direction depends on whether we're inverted or not
+    if (isInverted) {
+        Kniwwelino.MATRIXdrawIcon(ICON_ARROW_DOWN);
+    } else {
+        Kniwwelino.MATRIXdrawIcon(ICON_ARROW_UP);
+    }
+    Kniwwelino.sleep((unsigned long)500);
+    #if WIFI_ON
+    Kniwwelino.MQTTpublish("MOOD", myMood.text); // May need to reorder this
+    #else
+    extrinsicMood = myMood;
+    // network_mood = String(my_icon);
+    #endif
+}
+
 void handleButtons() {
-    // Serial.println("Button check");
     if (Kniwwelino.BUTTONAclicked()) {
         Serial.println(F(">>>BUTTON press: A"));
-        change_mood();
+        // By default, change the mood. If we're inverted, publish instead.
+        isInverted ? publish_mood() : change_mood();
     }
     if (Kniwwelino.BUTTONBclicked()) {
         Serial.println(F(">>>BUTTON press: B"));
-        Kniwwelino.MATRIXdrawIcon(ICON_ARROW_UP);
-        Kniwwelino.sleep((unsigned long)500);
-        #if WIFI_ON
-        Kniwwelino.MQTTpublish("MOOD", myMood.text); // May need to reorder this
-        #else
-        extrinsicMood = myMood;
-        // network_mood = String(my_icon);
-        #endif
+        // By default, publish the mood. If we're inverted, change it instead.
+        isInverted ? change_mood() : publish_mood();
     }
 }
 
@@ -230,6 +249,35 @@ void parseSerialConnectionAndDriveDevices() {
     }
 }
 
+void receivedMoodWiggleAnimation() {
+    // Display a wiggle animation to indicate a mood has been received
+    // TODO: This is horrid code, rewrite it so less horrid
+    for (int i = 0; i < 2; i++) {
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000100000000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000110000000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000011000000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000001100000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000000110000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000000010000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000000110000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000001100000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000011000000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.MATRIXdrawIcon(String("B0000000000110000000000000"));
+        Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.loop(); // do background stuff...
+    }
+
+}
+
 void connectSetup() {
     Kniwwelino.begin("Connected_Device", WIFI_ON, true, false); // Wifi=true, Fastboot=true, MQTT Logging=false
     Serial.begin(115200);
@@ -252,18 +300,30 @@ void connectSetup() {
 
     Kniwwelino.RGBsetBrightness((int)150);
     Kniwwelino.RGBclear();
-    Kniwwelino.MATRIXdrawIcon(ICON_SMILE);
     #if WIFI_ON
     Kniwwelino.MQTTpublish(F("hello_my_name_is"), String(Kniwwelino.getMAC()));
     #endif
     Kniwwelino.sleep(1000);
 
-    moods[0] = {0, F("HAPPY"), F("B0000001010000001000101110"), &doHappy};
-    moods[1] = {1, F("HEART"), F("B0101011111111110111000100"), &doHeart};
-    moods[2] = {2, F("SAD"), F("B0000001010000000111010001"), &doSad};
-    moods[3] = {3, F("SKULL"), F("B0111010101111110111001110"), &doSkull};
-    moods[4] = {4, F("SILLY"), F("B0101000000111110001100011"), &doSilly};
-    moods[5] = {5, F("DUCK"), F("B0110011100011110111000000"), &doDuck};
+    // Check if we're inverted and assign mood icons accordingly.
+    if (isInverted)
+    {
+        Serial.println(F(">>> INVERTED, setting icons accordingly"));
+        moods[0] = {0, F("HAPPY"), F("B0111010001000000101000000"), &doHappy};
+        moods[1] = {1, F("HEART"), F("B0010001110111111111101010"), &doHeart};
+        moods[2] = {2, F("SAD"),   F("B1000101110000000101000000"), &doSad};
+        moods[3] = {3, F("SKULL"), F("B0111001110111111010101110"), &doSkull};
+        moods[4] = {4, F("SILLY"), F("B0001100011111110000001010"), &doSilly};
+        moods[5] = {5, F("DUCK"),  F("B0000001110011111110001100"), &doDuck};
+    } else {
+        moods[0] = {0, F("HAPPY"), F("B0000001010000001000101110"), &doHappy};
+        moods[1] = {1, F("HEART"), F("B0101011111111110111000100"), &doHeart};
+        moods[2] = {2, F("SAD"), F("B0000001010000000111010001"), &doSad};
+        moods[3] = {3, F("SKULL"), F("B0111010101111110111001110"), &doSkull};
+        moods[4] = {4, F("SILLY"), F("B0101000000111110001100011"), &doSilly};
+        moods[5] = {5, F("DUCK"), F("B0110011100011110111000000"), &doDuck};
+    }
+
 
     // Cross-check that we have moods correctly.
     for (size_t i = 0; i < NUMBER_OF_MOODS; i++) {
@@ -282,6 +342,11 @@ void connectSetup() {
 
     // Confirm we're not currently zombied
     isSerialZombie = false;
+
+    // Display a startup mood
+    // For some reason we need the animation first to ensure the display works.
+    receivedMoodWiggleAnimation();
+    Kniwwelino.MATRIXdrawIcon(moods[0].icon);
 
     Serial.println();
 
@@ -360,3 +425,27 @@ void doDuck() {
     Serial.println(F("New mood received: DUCK"));
 }
 
+void setInverted(bool inverted) {
+    isInverted = inverted;
+    if (isInverted)
+    {
+        Serial.println(F(">>> INVERTED, setting icons accordingly"));
+        moods[0] = {0, F("HAPPY"), F("B0111010001000000101000000"), &doHappy};
+        moods[1] = {1, F("HEART"), F("B0010001110111111111101010"), &doHeart};
+        moods[2] = {2, F("SAD"),   F("B1000101110000000101000000"), &doSad};
+        moods[3] = {3, F("SKULL"), F("B0111001110111111010101110"), &doSkull};
+        moods[4] = {4, F("SILLY"), F("B0001100011111110000001010"), &doSilly};
+        moods[5] = {5, F("DUCK"),  F("B0000001110011111110001100"), &doDuck};
+    } else {
+        Serial.println(F(">>> NOT INVERTED, setting icons accordingly"));
+        moods[0] = {0, F("HAPPY"), F("B0000001010000001000101110"), &doHappy};
+        moods[1] = {1, F("HEART"), F("B0101011111111110111000100"), &doHeart};
+        moods[2] = {2, F("SAD"), F("B0000001010000000111010001"), &doSad};
+        moods[3] = {3, F("SKULL"), F("B0111010101111110111001110"), &doSkull};
+        moods[4] = {4, F("SILLY"), F("B0101000000111110001100011"), &doSilly};
+        moods[5] = {5, F("DUCK"), F("B0110011100011110111000000"), &doDuck};
+    }
+    // redisplay current mood
+    // Kniwwelino isn't necessarily alive yet.
+    // Kniwwelino.MATRIXdrawIcon(performedMood.icon);
+}
