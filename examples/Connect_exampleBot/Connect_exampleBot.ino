@@ -17,7 +17,7 @@ void setup() {
     // servo2.setPin(servo2Pin);
     servo1.setHome(90);
     // servo2.setHome(90);
-    delay(500);
+    Kniwwelino.sleep(500);
 }
 
 void loop() {

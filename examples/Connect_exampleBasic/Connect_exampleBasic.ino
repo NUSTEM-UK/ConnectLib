@@ -13,14 +13,13 @@ void setup() {
     servo2.attach(D7);
     servo1.write(90);
     servo2.write(90);
-    delay(500);
+    Kniwwelino.sleep(500);
 
     Kniwwelino.MATRIXdrawIcon(ICON_SMILE);
     #if WIFI_ON
     Kniwwelino.MQTTpublish(F("hello_my_name_is"), String(Kniwwelino.getMAC()));
     #endif
-
-    delay(1500);
+    Kniwwelino.sleep(1500);
     servos_disengage();
 
 }
