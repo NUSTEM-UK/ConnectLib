@@ -297,7 +297,6 @@ void connectSetup() {
 
     Kniwwelino.RGBsetBrightness((int)150);
     Kniwwelino.RGBclear();
-    Kniwwelino.MATRIXdrawIcon(ICON_SMILE);
     #if WIFI_ON
     Kniwwelino.MQTTpublish(F("hello_my_name_is"), String(Kniwwelino.getMAC()));
     #endif
@@ -344,6 +343,11 @@ void connectSetup() {
 
     // Confirm we're not currently zombied
     isSerialZombie = false;
+
+    // Display a startup mood
+    // For some reason we need the animation first to ensure the display works.
+    receivedMoodWiggleAnimation();
+    Kniwwelino.MATRIXdrawIcon(moods[0].icon);
 
     Serial.println();
 
@@ -442,4 +446,7 @@ void setInverted(bool inverted) {
         moods[4] = {4, F("SILLY"), F("B0101000000111110001100011"), &doSilly};
         moods[5] = {5, F("DUCK"), F("B0110011100011110111000000"), &doDuck};
     }
+    // redisplay current mood
+    // Kniwwelino isn't necessarily alive yet.
+    // Kniwwelino.MATRIXdrawIcon(performedMood.icon);
 }
