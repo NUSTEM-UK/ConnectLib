@@ -23,6 +23,7 @@ Mood extrinsicMood = moods[0];
 Mood performedMood = moods[0];
 
 bool isInverted = false; // Is the Kniwwelino mounted upside-down?
+bool moodReceived = false; // Has a new mood been received?
 
 String received_string = "";
 SoftwareSerial myPort(RX_PIN, TX_PIN, false, 256);
@@ -44,14 +45,8 @@ static void messageReceived(String &topic, String &payload) {
         if (tempIndex != -1) {
             extrinsicMood = moods[tempIndex];
         }
-        // Play the received mood animation
-        receivedMoodWiggleAnimation();
-        // Act on the received mood
-        checkMood();
-        // Serial.print(F("Mood is: "));
-        // Serial.println(tempIndex);
-
-        // network_mood = payload;
+        // Set flag that mood has been received
+        moodReceived = true;
     }
 }
 
@@ -168,14 +163,18 @@ void checkMood() {
     // }
     // ----- CUT HERE -----
 
-    // ...but for deployment, we now thing we want to respond
-    // to every mood received. This could get mad, and probably
-    // needs a rate limit.
-    // FIXED: rate limit. Now checked when messageReceived(), not in loop.
+    // ...but for deployment, we now think we want to respond
+    // to every mood received.
+    // Play the received animation
+    receivedMoodWiggleAnimation();
+    // Reassign mode variables
     performedMood = extrinsicMood;
     myMood = extrinsicMood;
+    // Unset the received flag (NB. doing this after playing the animation, which is blocky)
+    moodReceived = false;
+    // Call the associated action function
     performedMood.callback();
-    // TODO: Animate the mood change
+    // Set the icon dipslay
     Kniwwelino.MATRIXdrawIcon(performedMood.icon);
 
 }
@@ -261,14 +260,17 @@ void receivedMoodWiggleAnimation() {
         Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
         Kniwwelino.MATRIXdrawIcon(String("B0000000000001100000000000"));
         Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.loop();
         Kniwwelino.MATRIXdrawIcon(String("B0000000000000110000000000"));
         Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
         Kniwwelino.MATRIXdrawIcon(String("B0000000000000010000000000"));
         Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.loop();
         Kniwwelino.MATRIXdrawIcon(String("B0000000000000110000000000"));
         Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
         Kniwwelino.MATRIXdrawIcon(String("B0000000000001100000000000"));
         Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
+        Kniwwelino.loop();
         Kniwwelino.MATRIXdrawIcon(String("B0000000000011000000000000"));
         Kniwwelino.sleep((unsigned long) receivedMoodAnimationRate);
         Kniwwelino.MATRIXdrawIcon(String("B0000000000110000000000000"));
@@ -367,6 +369,12 @@ void connectLoop() {
         // ...and check the SoftwareSerial port in case we're being zombied
         checkSerialConnection();
         // debugSerialConnection();
+        // Check if the mood has changed
+        if (moodReceived) {
+            // It has, so update our performed mood accordingly
+            checkMood();
+        }
+
     }
 }
 
