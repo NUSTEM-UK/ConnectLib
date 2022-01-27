@@ -2,21 +2,19 @@
 
 // Define two servos only; the second is jittery with a Kniwwelino,
 // and we're not going to manage a third. Even though a bare D1 could.
-ConnectServo servo1;
-// ConnectServo servo2;
-
-// Set pins for servos
-static const uint8_t servo1Pin = D5;
-// static const uint8_t servo2Pin = D7;
+ConnectServo servoD5;
+ConnectServo servoD7;
 
 void setup() {
     // setInverted(true);
+    servoD5.setHome(90);
+    servoD7.setHome(90);
+
     connectSetup();
 
-    servo1.setPin(servo1Pin);
-    // servo2.setPin(servo2Pin);
-    servo1.setHome(90);
-    // servo2.setHome(90);
+    servoD5.setPin(D5);
+    servoD7.setPin(D7);
+
     Kniwwelino.sleep(500);
 }
 
@@ -26,7 +24,8 @@ void loop() {
 
 void doHappy() {
     Serial.println(F(">>> New mood received: HAPPY"));
-    servo1.wave(3, 135, 45);
+    servoD5.queueEaseTo(135, EASE_CUBIC_IN_OUT, 60);
+    servoD5.wave(3, 135, 45);
     // servo1.queueMoveTo(0);
     // servo1.queueWait(250);
     // servo2.queueMoveTo(0);
@@ -40,7 +39,7 @@ void doHappy() {
 
 void doSad() {
     Serial.println(F(">>> New mood received: SAD"));
-    servo1.queueEaseTo(0, EASE_CUBIC_IN_OUT, 15);
+    servoD5.queueEaseTo(0, EASE_CUBIC_OUT, 15);
     // servo2.queueEaseTo(180, EASE_CUBIC_IN_OUT, 20);
 }
 
