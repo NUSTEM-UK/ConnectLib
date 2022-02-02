@@ -332,6 +332,11 @@ void connectSetup() {
         moods[5] = {5, F("DUCK"), F("B0110011100011110111000000"), &doDuck};
     }
 
+    // Initiailise here, now moods[0] actually has values.
+    myMood = moods[0];
+    extrinsicMood = moods[0];
+    performedMood = moods[0];
+
 
     // Cross-check that we have moods correctly.
     for (size_t i = 0; i < NUMBER_OF_MOODS; i++) {
