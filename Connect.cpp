@@ -26,7 +26,7 @@ bool isInverted = false; // Is the Kniwwelino mounted upside-down?
 bool moodReceived = false; // Has a new mood been received?
 
 String received_string = "";
-SoftwareSerial myPort(RX_PIN, TX_PIN, false, 256);
+// SoftwareSerial myPort(RX_PIN, TX_PIN, false, 256);
 bool isSerialZombie = false;
 String received;
 char incomingChar = 0;
@@ -185,6 +185,7 @@ void checkMood() {
 
 }
 
+/**
 void checkSerialConnection() {
     // Has anything arrived over the software serial port?
     // Serial.println(F("Checking serial connection"));
@@ -234,7 +235,9 @@ void checkSerialConnection() {
         }
     }
 }
+*/
 
+/**
 void parseSerialConnectionAndDriveDevices() {
     // Get commands
     if (myPort.available() > 0) {
@@ -253,6 +256,7 @@ void parseSerialConnectionAndDriveDevices() {
         }
     }
 }
+*/
 
 void receivedMoodWiggleAnimation() {
     // Display a wiggle animation to indicate a mood has been received
@@ -345,13 +349,13 @@ void connectSetup() {
     }
 
     // Set up software serial connection for trainer bot
-    myPort.begin(57600);
-    if (!myPort) {
-        Serial.println(F("Invalid SoftwareSerial config"));
+    // myPort.begin(57600);
+    // if (!myPort) {
+        // Serial.println(F("Invalid SoftwareSerial config"));
         // Keep going, assume we never want serial. Ulp.
-    }
-    Serial.println();
-    Serial.println(F("SoftwareSerial started"));
+    // }
+    // Serial.println();
+    // Serial.println(F("SoftwareSerial started"));
 
     // Confirm we're not currently zombied
     isSerialZombie = false;
@@ -372,13 +376,13 @@ void connectLoop() {
     // Everything else depends on serial zombie state
     if (isSerialZombie) {
         // We *are* a serial zombie, so do as bidden
-        parseSerialConnectionAndDriveDevices();
+        // parseSerialConnectionAndDriveDevices();
     } else {
         // Do normal things
         handleButtons();
         ConnectMessenger.updateServos();
         // ...and check the SoftwareSerial port in case we're being zombied
-        checkSerialConnection();
+        // checkSerialConnection();
         // debugSerialConnection();
         // Check if the mood has changed
         if (moodReceived) {

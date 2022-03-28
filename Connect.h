@@ -11,7 +11,7 @@
 #define Connect_h
 #include <Kniwwelino.h>
 #include <ConnectServo.h>
-#include <SoftwareSerial.h>
+// #include <SoftwareSerial.h>
 
 #define WIFI_ON 1
 #define VERSION "0.04"
