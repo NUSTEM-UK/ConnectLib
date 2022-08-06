@@ -22,9 +22,12 @@ void loop() {
 }
 
 void doHappy() {
-    servoD5.wave(3, 135, 45);
+    servoD5.wave(3, 0, 180);
+    servoD7.wave(3, 0, 180);
 }
 
 void doSad() {
     servoD5.queueEaseTo(0, EASE_CUBIC_OUT, 15);
+    servoD7.flap(2, 0, 180);
 }
+
