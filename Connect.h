@@ -76,5 +76,9 @@ extern ServoMessenger ConnectMessenger;
 #define RX_PIN D6 // would use D2 on a D1 Mini
 #define TX_PIN D0 // would use D1 on a D1 Mini
 
+// We're going to patch the handleServoTimerInterrupt() method of ServoEasing,
+// to handle Kniwwelino updates externally.
+void handleServoTimerInterrupt();
+
 #endif
 

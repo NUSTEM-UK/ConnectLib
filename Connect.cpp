@@ -468,3 +468,24 @@ void setInverted(bool inverted) {
     // Kniwwelino isn't necessarily alive yet.
     // Kniwwelino.MATRIXdrawIcon(performedMood.icon);
 }
+
+// Patching ServoEasing update function, to also call Kniwwelino update method off
+// the servo timer, to avoid jitter.
+void handleServoTimerInterrupt() {
+    // Check the (misused) ICNC1 flag, which signals that ServoEasing interrupts were enabled again.
+//     if (TCCR1B & _BV(ICNC1)) {
+//         // Flag was set -> call update
+//         if (updateAllServos()) {
+//             // All servos have stopped here
+//             // But we won't disable the interrupt, since we need it for Kniwwelino functions.
+//             // We'll just reset the flag.
+//             TCCR1B &= ~_BV(ICNC1);    // Reset flag
+// #if defined(INFO)
+//             Serial.println(F("All servos stopped, using interrupts now only for Kniwwelino functions"));
+// #endif
+//         }
+//     }
+    updateAllServos();
+    // Trigger the Kniwwelino external update method.
+    Kniwwelino.updateFromServoTimer();
+}
