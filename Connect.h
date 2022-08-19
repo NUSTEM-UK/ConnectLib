@@ -9,6 +9,7 @@
 
 #ifndef Connect_h
 #define Connect_h
+#define ENABLE_EXTERNAL_SERVO_TIMER_HANDLER
 #include <Kniwwelino.h>
 #include <ConnectServo.h>
 #include <SoftwareSerial.h>

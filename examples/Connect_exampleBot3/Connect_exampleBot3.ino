@@ -1,4 +1,4 @@
-// #include <ServoEasing.hpp>
+#include <ServoEasing.hpp>
 #include <Connect.h>
 
 // Define two servos only; the second is jittery with a Kniwwelino,
