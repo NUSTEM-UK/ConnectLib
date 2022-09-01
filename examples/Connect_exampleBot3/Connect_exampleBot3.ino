@@ -1,3 +1,4 @@
+#define ENABLE_EXTERNAL_SERVO_TIMER_HANDLER
 #include <ServoEasing.hpp>
 #include <Connect.h>
 
