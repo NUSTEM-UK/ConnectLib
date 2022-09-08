@@ -361,6 +361,10 @@ void connectSetup() {
     receivedMoodWiggleAnimation();
     Kniwwelino.MATRIXdrawIcon(moods[0].icon);
 
+    // Now dim the display to see if we can mitigate power issues leading to servo jitter
+    Kniwwelino.MATRIXsetBrightness(0);
+    Kniwwelino.RGBclear();
+
     Serial.println();
 
 }
@@ -378,7 +382,7 @@ void connectLoop() {
         handleButtons();
         ConnectMessenger.updateServos();
         // ...and check the SoftwareSerial port in case we're being zombied
-        checkSerialConnection();
+        // checkSerialConnection();
         // debugSerialConnection();
         // Check if the mood has changed
         if (moodReceived) {
@@ -472,7 +476,7 @@ void setInverted(bool inverted) {
 // Patching ServoEasing update function, to also call Kniwwelino update method off
 // the servo timer, to avoid jitter.
 void handleServoTimerInterrupt() {
-    // Check the (misused) ICNC1 flag, which signals that ServoEasing interrupts were enabled again.
+//     // Check the (misused) ICNC1 flag, which signals that ServoEasing interrupts were enabled again.
 //     if (TCCR1B & _BV(ICNC1)) {
 //         // Flag was set -> call update
 //         if (updateAllServos()) {
@@ -485,6 +489,8 @@ void handleServoTimerInterrupt() {
 // #endif
 //         }
 //     }
+    // This was a crude debug flag, to check this got called. It does.
+    // Serial.print(".");
     updateAllServos();
     // Trigger the Kniwwelino external update method.
     Kniwwelino.updateFromServoTimer();
